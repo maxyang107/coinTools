@@ -1,12 +1,28 @@
 # coinTools
+代码已开源
 集成代币工具，主币归集，erc20代币归集，erc20代币空投，erc721nft空投。批量创建eth钱包。批量生成邮箱地址，如果对你也有帮助，请帮忙点一下星星，纯自己码的代码，欢迎大佬们指指点点，有其他工具的需求，欢迎大家提，我这边空了也会更新上来
 
 # 使用方法
 ```
-下载coinTools，双击coinTools.exe
+windows下可以直接下载coinTools，双击coinTools.exe
 ```
 ![image](https://user-images.githubusercontent.com/39045850/148506114-89b1352c-56c5-4964-8d85-771ecb97a2e2.png)
 
+mac 及linux系统自己编译就可以了：
+
+```
+go mod download
+
+go build -o coinTools ./
+
+./coinTools
+
+```
+
+# 网络配置
+当前默认是币安智能链主网
+
+如果需要改网络的话，打开conn/eclient.go自行配置
 
 处理结果会记录在当前目录的log文件中
 
