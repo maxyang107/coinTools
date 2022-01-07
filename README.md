@@ -22,7 +22,13 @@ go build -o coinTools ./
 # 网络配置
 当前默认是币安智能链主网
 
-如果需要改网络的话，打开conn/eclient.go自行配置
+如果需要改网络的话，打开conf.json自行配置
+```
+{
+    "ChanConn":  "https://bsc-dataseed1.binance.org",
+	"GasLimmit": 210000
+}
+```
 
 处理结果会记录在当前目录的log文件中
 
