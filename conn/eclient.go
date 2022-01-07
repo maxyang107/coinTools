@@ -22,7 +22,7 @@ func init() {
 }
 
 func newClient() *ethclient.Client {
-	Eclient, err := ethclient.Dial("https://bsc-dataseed1.binance.org")
+	Eclient, err := ethclient.Dial(utils.ConfObj.ChanConn)
 	if err != nil {
 		utils.Loger.Println("主链连接错误错误：" + err.Error())
 		os.Exit(0)

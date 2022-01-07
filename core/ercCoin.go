@@ -2,7 +2,7 @@
  * @Description:ERC20代币归集
  * @Author: maxyang
  * @Date: 2022-01-06 17:01:58
- * @LastEditTime: 2022-01-07 13:51:03
+ * @LastEditTime: 2022-01-07 17:07:26
  * @LastEditors: liutq
  * @Reference:
  */
@@ -94,7 +94,7 @@ func CollectErc20Coin(contractAdd string, filename string, CollectionAddress str
 			continue
 		}
 
-		opts.GasLimit = uint64(210000)
+		opts.GasLimit = utils.ConfObj.GasLimmit
 		opts.Nonce = new(big.Int).SetInt64(int64(nonce))
 		opts.GasPrice = gasPrice
 

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: maxyang
  * @Date: 2022-01-06 18:04:09
- * @LastEditTime: 2022-01-07 13:31:58
+ * @LastEditTime: 2022-01-07 17:07:10
  * @LastEditors: liutq
  * @Reference:
  */
@@ -76,7 +76,7 @@ func AirDropErc20Coin(contractAdd string, filename string, fromAdd string, prive
 			continue
 		}
 
-		opts.GasLimit = uint64(210000)
+		opts.GasLimit = utils.ConfObj.GasLimmit
 		opts.Nonce = new(big.Int).SetInt64(int64(nonce))
 		opts.GasPrice = gasPrice
 

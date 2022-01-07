@@ -2,7 +2,7 @@
  * @Description:批量归集主币excel版本
  * @Author: maxyang
  * @Date: 2022-01-06 10:52:51
- * @LastEditTime: 2022-01-07 14:52:56
+ * @LastEditTime: 2022-01-07 17:07:16
  * @LastEditors: liutq
  * @Reference:
  */
@@ -66,7 +66,7 @@ func CollectCoin(fileName string, CollectionAddress string) {
 			continue
 		}
 
-		gasLimit := uint64(21000)
+		gasLimit := utils.ConfObj.GasLimmit
 		gasPrice, err := client.SuggestGasPrice(context.Background())
 		if err != nil {
 			utils.Loger.Println("获取gasprice错误：" + err.Error() + "对应钱包地址：" + row[0])
