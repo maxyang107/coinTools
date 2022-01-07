@@ -13,3 +13,6 @@
 使用前务必看模板文件，对应文件才能正常解析，执行完成后，会在对应的excel文件中记录交易hash
 
 ![image](https://user-images.githubusercontent.com/39045850/148506463-d316a9f8-861f-4db5-8772-cf32d540b741.png)
+
+
+空投nft跟批量生成邮箱的工具正在开发中……，后续会更新
