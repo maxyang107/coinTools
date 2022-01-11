@@ -2,7 +2,7 @@
  * @Description:
  * @Author: maxyang
  * @Date: 2022-01-06 18:04:09
- * @LastEditTime: 2022-01-07 17:07:10
+ * @LastEditTime: 2022-01-10 14:53:13
  * @LastEditors: liutq
  * @Reference:
  */
@@ -32,19 +32,19 @@ func AirDropErc20Coin(contractAdd string, filename string, fromAdd string, prive
 	xlsx, err := excelize.OpenFile(fmt.Sprintf("./%s.xlsx", filename))
 	if err != nil {
 		fmt.Println("excel reder err:", err)
-		utils.Loger.Println("读取excel文件错误：" + err.Error())
+		utils.WriteLog("读取excel文件错误："+err.Error(), "E")
 		os.Exit(1)
 	}
 	rows := xlsx.GetRows("Sheet1")
 	udi, err := contract.NewUdi(common.HexToAddress(contractAdd), client)
 	if err != nil {
-		utils.Loger.Println("读取DUI错误：" + err.Error())
+		utils.WriteLog("读取DUI错误："+err.Error(), "E")
 		return
 	}
 
 	privateKey, err := crypto.HexToECDSA(priveKey)
 	if err != nil {
-		utils.Loger.Println("加密私钥错误：" + err.Error())
+		utils.WriteLog("加密私钥错误："+err.Error(), "E")
 		return
 	}
 
@@ -55,24 +55,24 @@ func AirDropErc20Coin(contractAdd string, filename string, fromAdd string, prive
 
 		nonce, err := client.NonceAt(context.Background(), common.HexToAddress(fromAdd), nil)
 		if err != nil {
-			utils.Loger.Println("获取nonce错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取nonce错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
 		gasPrice, err := client.SuggestGasPrice(context.Background())
 		if err != nil {
-			utils.Loger.Println("获取gasPrace错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取gasPrace错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
 		chainID, err := client.NetworkID(context.Background())
 		if err != nil {
-			utils.Loger.Println("获取链ID错误" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取链ID错误"+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 		opts, err := bind.NewKeyedTransactorWithChainID(privateKey, chainID)
 		if err != nil {
-			utils.Loger.Println("组装options错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("组装options错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
@@ -82,7 +82,7 @@ func AirDropErc20Coin(contractAdd string, filename string, fromAdd string, prive
 
 		amount, err := decimal.NewFromString(row[1])
 		if err != nil {
-			utils.Loger.Println("获取空投代币数量错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取空投代币数量错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
@@ -103,13 +103,13 @@ func AirDropErc20Coin(contractAdd string, filename string, fromAdd string, prive
 			goto LOOP
 		}
 
-		utils.Loger.Println("转出地址：" + fromAdd + "转入地址：" + row[0] + "交易hash：" + tx.Hash().Hex())
+		utils.WriteLog("转出地址："+fromAdd+"转入地址："+row[0]+"交易hash："+tx.Hash().Hex(), "T")
 		xlsx.SetCellValue("Sheet1", fmt.Sprintf("C%d", key+1), tx.Hash().Hex())
 
 	}
 	if err := xlsx.SaveAs(fmt.Sprintf("%s.xlsx", filename)); err != nil {
 		fmt.Println(err)
 	}
-	utils.Loger.Println("空投任务完成")
+	utils.WriteLog("ERC20空投任务完成", "T")
 	fmt.Println("任务完成")
 }

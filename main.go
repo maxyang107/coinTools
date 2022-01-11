@@ -2,7 +2,7 @@
  * @Description:
  * @Author: maxyang
  * @Date: 2022-01-06 10:17:34
- * @LastEditTime: 2022-01-07 15:04:58
+ * @LastEditTime: 2022-01-10 18:05:47
  * @LastEditors: liutq
  * @Reference:
  */
@@ -16,9 +16,11 @@ import (
 	"strings"
 
 	"github.com/maxyang107/collectcoin/core"
+	"github.com/maxyang107/collectcoin/utils"
 )
 
 func main() {
+	utils.WriteLog("当前区块链地址："+utils.ConfObj.ChanConn, "T")
 LOOP:
 	text := menu()
 	switch text {
@@ -31,11 +33,9 @@ LOOP:
 	case "4":
 		airDropErc20()
 	case "5":
-		fmt.Println("开发中")
-		goto LOOP
+		airDropNft()
 	case "6":
-		fmt.Println("开发中")
-		goto LOOP
+		batchCreateEmailAccount()
 	default:
 		fmt.Println("无效的操作")
 		goto LOOP
@@ -49,6 +49,7 @@ func menu() string {
 	fmt.Println("=           工具箱           =")
 	fmt.Println("==============================")
 	fmt.Println("请输入你要执行的任务")
+	fmt.Println("")
 	fmt.Println("1.主币归集")
 	fmt.Println("")
 	fmt.Println("2.ERC20代币归集")
@@ -165,4 +166,62 @@ func airDropErc20() {
 	}
 
 	core.AirDropErc20Coin(contractename, filectename, fromAdd, privekey)
+}
+
+/**
+ * @description: 方法描述：批量创建邮箱
+ * @Author: maxyang
+ * @return {*}
+ */
+func batchCreateEmailAccount() {
+	bufnum := bufio.NewReader(os.Stdin)
+	fmt.Print("请输入生成邮箱账号数量：")
+	emailNum, _ := bufnum.ReadString('\r')
+	emailNum = strings.Replace(emailNum, "\r", "", -1)
+	numint, err := strconv.Atoi(emailNum)
+	if err != nil {
+		utils.WriteLog("输入字符串转整形错误："+err.Error(), "E")
+	}
+
+	buffname := bufio.NewReader(os.Stdin)
+	fmt.Print("请输入导出文件名称：")
+	filename, _ := buffname.ReadString('\r')
+	filename = strings.Replace(filename, "\r", "", -1)
+
+	core.BatchCreateEmail(numint, filename)
+}
+
+/**
+ * @description: 方法描述：批量空投nft
+ * @Author: maxyang
+ * @return {*}
+ */
+func airDropNft() {
+	fmt.Println("空投NFT前，请确认主钱包账户里面有足够的主币能够支付链上gas费用")
+	bufcontract := bufio.NewReader(os.Stdin)
+	fmt.Print("请输入NFT合约地址：")
+	contractename, _ := bufcontract.ReadString('\r')
+	contractename = strings.Replace(contractename, "\r", "", -1)
+
+	buffile := bufio.NewReader(os.Stdin)
+	fmt.Print("请输入空投的excel文件名称：")
+	filectename, _ := buffile.ReadString('\r')
+	filectename = strings.Replace(filectename, "\r", "", -1)
+
+	buffromadd := bufio.NewReader(os.Stdin)
+	fmt.Print("请输入NFT转出钱包地址：")
+	fromAdd, _ := buffromadd.ReadString('\r')
+	fromAdd = strings.Replace(fromAdd, "\r", "", -1)
+
+	bufprive := bufio.NewReader(os.Stdin)
+	fmt.Print("请输入转出钱包私钥：")
+	privekey, _ := bufprive.ReadString('\r')
+	privekey = strings.Replace(privekey, "\r", "", -1)
+
+	if contractename == "" || filectename == "" || fromAdd == "" || privekey == "" {
+		fmt.Println("输入错误")
+		os.Exit(0)
+	}
+
+	core.AirDropNft(contractename, filectename, fromAdd, privekey)
 }

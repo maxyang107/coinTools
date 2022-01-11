@@ -36,7 +36,8 @@ func CreateWallet(num int, fileName string) {
 		publicKey := privateKey.Public()
 		publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 		if !ok {
-			log.Fatal("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+			utils.WriteLog("cannot assert type: publicKey is not of type *ecdsa.PublicKey", "E")
+			return
 		}
 		address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
 		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", i), address)
@@ -44,8 +45,9 @@ func CreateWallet(num int, fileName string) {
 		f.SetActiveSheet(index)
 	}
 	if err := f.SaveAs(fmt.Sprintf("%s.xlsx", fileName)); err != nil {
-		fmt.Println(err)
+		utils.WriteLog("保存excel时发生错误", "E")
+		return
 	}
-	utils.Loger.Println(fmt.Sprintf("钱包生成完成，共计生成了：%d个", num))
+	utils.WriteLog(fmt.Sprintf("钱包生成完成，共计生成了：%d个", num), "T")
 	fmt.Println("生成任务完成！")
 }

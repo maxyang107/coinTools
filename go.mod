@@ -8,11 +8,13 @@ require (
 	github.com/google/uuid v1.1.5 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
+	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
 )
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
+	github.com/astaxie/beego v1.12.3
 	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/deckarep/golang-set v0.0.0-20180603214616-504e848d77ea // indirect
 	github.com/go-ole/go-ole v1.2.1 // indirect

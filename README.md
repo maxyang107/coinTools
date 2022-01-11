@@ -1,3 +1,11 @@
+<!--
+ * @Description: 
+ * @Author: maxyang
+ * @Date: 2022-01-07 17:11:23
+ * @LastEditTime: 2022-01-11 09:43:45
+ * @LastEditors: liutq
+ * @Reference: 
+-->
 # coinTools
 代码已开源
 集成代币工具，主币归集，erc20代币归集，erc20代币空投，erc721nft空投。批量创建eth钱包。批量生成邮箱地址，如果对你也有帮助，请帮忙点一下星星，纯自己码的代码，欢迎大佬们指指点点，有其他工具的需求，欢迎大家提，我这边空了也会更新上来
@@ -19,6 +27,13 @@ go build -o coinTools ./
 
 ```
 
+windows系统编译：
+
+```
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o coinTools.exe ./
+
+```
+
 # 网络配置
 当前默认是币安智能链主网
 
@@ -37,4 +52,6 @@ go build -o coinTools ./
 ![image](https://user-images.githubusercontent.com/39045850/148506463-d316a9f8-861f-4db5-8772-cf32d540b741.png)
 
 
-空投nft跟批量生成邮箱的工具正在开发中……，后续会更新
+注意事项
+mac，linux环境下请将mian.go文件中的“ \r”替换成“\n”
+

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: maxyang
  * @Date: 2022-01-06 10:53:23
- * @LastEditTime: 2022-01-07 14:11:09
+ * @LastEditTime: 2022-01-10 12:04:12
  * @LastEditors: liutq
  * @Reference:
  */
@@ -24,7 +24,7 @@ func init() {
 func newClient() *ethclient.Client {
 	Eclient, err := ethclient.Dial(utils.ConfObj.ChanConn)
 	if err != nil {
-		utils.Loger.Println("主链连接错误错误：" + err.Error())
+		utils.WriteLog("主链连接错误错误："+err.Error(), "E")
 		os.Exit(0)
 	}
 	return Eclient

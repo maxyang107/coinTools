@@ -1,0 +1,5 @@
+{
+    "ChanConn":  "https://data-seed-prebsc-1-s1.binance.org:8545",
+	"GasLimmit": 210000,
+    "LogFileName":"record"
+}

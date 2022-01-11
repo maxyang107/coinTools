@@ -2,7 +2,7 @@
  * @Description:ERC20代币归集
  * @Author: maxyang
  * @Date: 2022-01-06 17:01:58
- * @LastEditTime: 2022-01-07 17:07:26
+ * @LastEditTime: 2022-01-10 13:41:20
  * @LastEditors: liutq
  * @Reference:
  */
@@ -36,13 +36,13 @@ func CollectErc20Coin(contractAdd string, filename string, CollectionAddress str
 	client := conn.Eclient
 	xlsx, err := excelize.OpenFile(fmt.Sprintf("./%s.xlsx", filename))
 	if err != nil {
-		utils.Loger.Println("读取excel文件错误：" + err.Error())
+		utils.WriteLog("读取excel文件错误："+err.Error(), "E")
 		os.Exit(1)
 	}
 	rows := xlsx.GetRows("Sheet1")
 	udi, err := contract.NewUdi(common.HexToAddress(contractAdd), client)
 	if err != nil {
-		utils.Loger.Println("读取DUI错误：" + err.Error())
+		utils.WriteLog("读取DUI错误："+err.Error(), "E")
 		return
 	}
 
@@ -56,7 +56,7 @@ func CollectErc20Coin(contractAdd string, filename string, CollectionAddress str
 
 		if err != nil {
 			errnum++
-			utils.Loger.Println("获取ERC20代币错误，对应钱包地址：" + row[0] + "已跳过该地址")
+			utils.WriteLog("获取ERC20代币错误，对应钱包地址："+row[0]+"已跳过该地址", "E")
 			continue
 		}
 		//如果等于0，跳过
@@ -68,29 +68,29 @@ func CollectErc20Coin(contractAdd string, filename string, CollectionAddress str
 		//执行转账
 		privateKey, err := crypto.HexToECDSA(row[1])
 		if err != nil {
-			utils.Loger.Println("加密私钥错误：" + err.Error())
+			utils.WriteLog("加密私钥错误："+err.Error(), "E")
 			continue
 		}
 
 		nonce, err := client.NonceAt(context.Background(), common.HexToAddress(row[0]), nil)
 		if err != nil {
-			utils.Loger.Println("获取nonce错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取nonce错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
 		gasPrice, err := client.SuggestGasPrice(context.Background())
 		if err != nil {
-			utils.Loger.Println("获取gasprice错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取gasprice错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 		chainID, err := client.NetworkID(context.Background())
 		if err != nil {
-			utils.Loger.Println("获取链ID错误" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取链ID错误"+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 		opts, err := bind.NewKeyedTransactorWithChainID(privateKey, chainID)
 		if err != nil {
-			utils.Loger.Println("组装options错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("组装options错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
@@ -102,7 +102,7 @@ func CollectErc20Coin(contractAdd string, filename string, CollectionAddress str
 		gasbalance, _ := client.BalanceAt(context.Background(), common.HexToAddress(row[0]), nil)
 
 		if gasbalance.Cmp(gasCost) < 0 {
-			utils.Loger.Println("交易gas费用不足，对应钱包地址：" + row[0] + "已跳过该地址")
+			utils.WriteLog("交易gas费用不足，对应钱包地址："+row[0]+"已跳过该地址", "T")
 			xlsx.SetCellValue("Sheet1", fmt.Sprintf("C%d", key+1), "交易gas费用不足，对应钱包地址："+row[0]+"已跳过该地址")
 			errnum++
 			continue
@@ -111,19 +111,19 @@ func CollectErc20Coin(contractAdd string, filename string, CollectionAddress str
 		tx, err := udi.Transfer(opts, ToAddress, blance)
 
 		if err != nil {
-			utils.Loger.Println("获取ERC20代币错误，对应钱包地址：" + row[0] + "已跳过该地址")
+			utils.WriteLog("获取ERC20代币错误，对应钱包地址："+row[0]+"已跳过该地址", "E")
 			fmt.Println(err)
 			xlsx.SetCellValue("Sheet1", fmt.Sprintf("C%d", key+1), "获取ERC20代币错误，对应钱包地址："+row[0]+"已跳过该地址")
 			errnum++
 			continue
 		}
 		succnum++
-		utils.Loger.Println("转出地址：" + row[0] + "转入地址：" + CollectionAddress + "交易hash：" + tx.Hash().Hex())
+		utils.WriteLog("转出地址："+row[0]+"转入地址："+CollectionAddress+"交易hash："+tx.Hash().Hex(), "T")
 		xlsx.SetCellValue("Sheet1", fmt.Sprintf("C%d", key+1), tx.Hash().Hex())
 	}
 	if err := xlsx.SaveAs(fmt.Sprintf("%s.xlsx", filename)); err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(fmt.Sprintf("归集任务执行完成，成功%d个，失败%d个，账户余额为0的账户%d个", succnum, errnum, ziornum))
-	utils.Loger.Println(fmt.Sprintf("归集任务执行完成，成功%d个，失败%d个，账户余额为0的账户%d个", succnum, errnum, ziornum))
+	utils.WriteLog(fmt.Sprintf("归集任务执行完成，成功%d个，失败%d个，账户余额为0的账户%d个", succnum, errnum, ziornum), "T")
 }

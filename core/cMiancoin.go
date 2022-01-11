@@ -29,7 +29,7 @@ func CollectCoin(fileName string, CollectionAddress string) {
 
 	xlsx, err := excelize.OpenFile(fmt.Sprintf("./%s.xlsx", fileName))
 	if err != nil {
-		utils.Loger.Println("读取excel文件错误：" + err.Error())
+		utils.WriteLog("读取excel文件错误："+err.Error(), "E")
 		os.Exit(1)
 	}
 	rows := xlsx.GetRows("Sheet1")
@@ -38,7 +38,7 @@ func CollectCoin(fileName string, CollectionAddress string) {
 		account := common.HexToAddress(row[0])
 		balance, err := client.BalanceAt(context.Background(), account, nil)
 		if err != nil {
-			utils.Loger.Println("读取账户余额错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("读取账户余额错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 		//如果等于0，跳过
@@ -48,28 +48,28 @@ func CollectCoin(fileName string, CollectionAddress string) {
 
 		privateKey, err := crypto.HexToECDSA(row[1])
 		if err != nil {
-			utils.Loger.Println("加密私钥错误：" + err.Error())
+			utils.WriteLog("加密私钥错误："+err.Error(), "E")
 			continue
 		}
 
 		publicKey := privateKey.Public()
 		publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 		if !ok {
-			utils.Loger.Println("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+			utils.WriteLog("cannot assert type: publicKey is not of type *ecdsa.PublicKey", "E")
 			continue
 		}
 
 		fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 		nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
 		if err != nil {
-			utils.Loger.Println("获取nonce错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取nonce错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
 		gasLimit := utils.ConfObj.GasLimmit
 		gasPrice, err := client.SuggestGasPrice(context.Background())
 		if err != nil {
-			utils.Loger.Println("获取gasprice错误：" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取gasprice错误："+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
@@ -83,22 +83,24 @@ func CollectCoin(fileName string, CollectionAddress string) {
 		chainID, err := client.NetworkID(context.Background())
 
 		if err != nil {
-			utils.Loger.Println("获取链ID错误" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("获取链ID错误"+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
 		signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
 		if err != nil {
-			utils.Loger.Println("交易签名错误" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("交易签名错误"+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
 
 		err = client.SendTransaction(context.Background(), signedTx)
 		if err != nil {
-			utils.Loger.Println("发送交易错误" + err.Error() + "对应钱包地址：" + row[0])
+			utils.WriteLog("发送交易错误"+err.Error()+"对应钱包地址："+row[0], "E")
 			continue
 		}
-		utils.Loger.Println("转出地址：" + row[0] + " 转入地址：" + CollectionAddress + " 交易hasd：" + signedTx.Hash().Hex())
+		utils.WriteLog("转出地址："+row[0]+" 转入地址："+CollectionAddress+" 交易hasd："+signedTx.Hash().Hex(), "T")
 	}
+
+	utils.WriteLog("主币归集任务完成", "T")
 	fmt.Println("任务完成")
 }
